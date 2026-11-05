@@ -5,7 +5,7 @@ const app = express();
 app.use(express.json());
 
 const BOT_TOKEN = "8975412628:AAG7wgrp5gHbxLu1dKGatp4jooHZBwL1kF4";
-const PIXEL_ID = "1458987409503130";
+const PIXEL_ID = "1432190382360001";
 const ACCESS_TOKEN = "EAGk1ypOn8IwBSwtvAEZCm2AQZClEdxRuvF2wvQhZBoZB7XqBlbM73uPC12NXvq5XsyEj5y3DhpiRDKJK3UMPAWwuvZAdKUlAuGlyTwo02iLbT6GT7ZAgfNBjk59ZAo7QZCbbwvorJ8AkvZBMW8esZARPjfZCGsCOPwzBmWjA5z1RpbsYIkSMQ1bysgzeoSMScmY1QZDZD";
 const CHANNEL_LINK = "https://t.me/+hIBCZJfuZ6Y0Y2U1";
 
