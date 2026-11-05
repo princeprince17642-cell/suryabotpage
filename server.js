@@ -9,20 +9,17 @@ const PIXEL_ID = "1432190382360001";
 const ACCESS_TOKEN = "EAAfydwR67hUBSZCKIMIELCEMOThYRWWV7tMEaxqZCRhWBpNnzUp8qsJkkJlUG1hJP4Rx0ft76eJAXS9AXY1SJ8AhuDlZA2N9ZBHT2vmziBUUtatVmhPFe4xAj3jXA84TBvgVEqJ8vry1kryYRRFZBjGTkMZCrQoXz1ZBvZBAeOK2AGfLpqAaDUIey3sSD5UB0ltaxgZDZD";
 const CHANNEL_LINK = "https://t.me/+hIBCZJfuZ6Y0Y2U1";
 
-// Temporary memory store to map telegram user to fbclid if passed via start
 const userClickMapping = {};
 
 app.get('/', (req, res) => {
     res.send("Surya Sureshot King Bot & CAPI Server is Active!");
 });
 
-// Telegram Webhook Endpoint
 app.post('/api/webhook', async (req, res) => {
     try {
         const update = req.body;
         console.log("📥 Incoming Telegram Update:", JSON.stringify(update));
         
-        // Handle /start command (agar user ?start=fbclid_xxx ke sath aaye)
         if (update.message && update.message.text && update.message.text.startsWith('/start')) {
             const chatId = update.message.chat.id;
             const textParts = update.message.text.split(' ');
@@ -54,7 +51,6 @@ app.post('/api/webhook', async (req, res) => {
             console.log("✅ Welcome message sent to chat:", chatId);
         }
 
-        // Handle Chat Join Request
         const event = update.chat_join_request;
         if (event) {
             const userId = event.from.id;
@@ -62,14 +58,12 @@ app.post('/api/webhook', async (req, res) => {
             const date = event.date || Math.floor(Date.now() / 1000);
             console.log("🔥 Chat Join Request detected from User ID:", userId);
 
-            // Check if we have an fbclid stored for this user
             const storedFbclid = userClickMapping[userId] || userClickMapping[chatId];
 
             const userData = {
                 external_id: crypto.createHash('sha256').update(String(userId)).digest('hex')
             };
 
-            // Agar fbclid mil gaya toh CAPI mein 'fbc' pass kar do (Meta campaign attribution ke liye)
             if (storedFbclid) {
                 userData.fbc = `fb.1.${Date.now()}.${storedFbclid}`;
                 console.log("🎯 Attached fbc to CAPI payload:", userData.fbc);
@@ -85,7 +79,7 @@ app.post('/api/webhook', async (req, res) => {
                 }]
             };
 
-            const capiRes = await fetch(`https://graph.facebook.com/v19.0/${PIXEL_ID}/events?access_token=${ACCESS_TOKEN}`, {
+            const capiRes = andFetch = await fetch(`https://graph.facebook.com/v19.0/${PIXEL_ID}/events?access_token=${ACCESS_TOKEN}`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(capiPayload)
