@@ -1,0 +1,12 @@
+{
+  "name": "telegram-capi-bot",
+  "version": "1.0.0",
+  "description": "Telegram chat join request to Meta CAPI",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.19.2"
+  }
+}
