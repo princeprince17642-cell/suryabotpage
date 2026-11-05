@@ -6,7 +6,7 @@ app.use(express.json());
 
 const BOT_TOKEN = "8975412628:AAG7wgrp5gHbxLu1dKGatp4jooHZBwL1kF4";
 const PIXEL_ID = "1432190382360001";
-const ACCESS_TOKEN = "EAGk1ypOn8IwBSwtvAEZCm2AQZClEdxRuvF2wvQhZBoZB7XqBlbM73uPC12NXvq5XsyEj5y3DhpiRDKJK3UMPAWwuvZAdKUlAuGlyTwo02iLbT6GT7ZAgfNBjk59ZAo7QZCbbwvorJ8AkvZBMW8esZARPjfZCGsCOPwzBmWjA5z1RpbsYIkSMQ1bysgzeoSMScmY1QZDZD";
+const ACCESS_TOKEN = "EAAfydwR67hUBSZCKIMIELCEMOThYRWWV7tMEaxqZCRhWBpNnzUp8qsJkkJlUG1hJP4Rx0ft76eJAXS9AXY1SJ8AhuDlZA2N9ZBHT2vmziBUUtatVmhPFe4xAj3jXA84TBvgVEqJ8vry1kryYRRFZBjGTkMZCrQoXz1ZBvZBAeOK2AGfLpqAaDUIey3sSD5UB0ltaxgZDZD";
 const CHANNEL_LINK = "https://t.me/+hIBCZJfuZ6Y0Y2U1";
 
 // Temporary memory store to map telegram user to fbclid if passed via start
