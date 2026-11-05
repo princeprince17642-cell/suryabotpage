@@ -9,6 +9,9 @@ const PIXEL_ID = "1432190382360001";
 const ACCESS_TOKEN = "EAGk1ypOn8IwBSwtvAEZCm2AQZClEdxRuvF2wvQhZBoZB7XqBlbM73uPC12NXvq5XsyEj5y3DhpiRDKJK3UMPAWwuvZAdKUlAuGlyTwo02iLbT6GT7ZAgfNBjk59ZAo7QZCbbwvorJ8AkvZBMW8esZARPjfZCGsCOPwzBmWjA5z1RpbsYIkSMQ1bysgzeoSMScmY1QZDZD";
 const CHANNEL_LINK = "https://t.me/+hIBCZJfuZ6Y0Y2U1";
 
+// Temporary memory store to map telegram user to fbclid if passed via start
+const userClickMapping = {};
+
 app.get('/', (req, res) => {
     res.send("Surya Sureshot King Bot & CAPI Server is Active!");
 });
@@ -19,9 +22,20 @@ app.post('/api/webhook', async (req, res) => {
         const update = req.body;
         console.log("📥 Incoming Telegram Update:", JSON.stringify(update));
         
-        // Handle /start command from user
+        // Handle /start command (agar user ?start=fbclid_xxx ke sath aaye)
         if (update.message && update.message.text && update.message.text.startsWith('/start')) {
             const chatId = update.message.chat.id;
+            const textParts = update.message.text.split(' ');
+            
+            if (textParts.length > 1) {
+                const param = textParts[1];
+                if (param.startsWith('fbclid_')) {
+                    const fbclidVal = param.replace('fbclid_', '');
+                    userClickMapping[chatId] = fbclidVal;
+                    console.log(`🔗 Mapped Telegram User ${chatId} with fbclid: ${fbclidVal}`);
+                }
+            }
+
             const payload = {
                 chat_id: chatId,
                 text: "🔥 *Welcome to SURYA SURESHOT KING!*\n\nClick below to access our exclusive channel:",
@@ -40,12 +54,26 @@ app.post('/api/webhook', async (req, res) => {
             console.log("✅ Welcome message sent to chat:", chatId);
         }
 
-        // Handle Chat Join Request (Jab user request bhejega, tab Subscribe event fire hoga)
+        // Handle Chat Join Request
         const event = update.chat_join_request;
         if (event) {
             const userId = event.from.id;
+            const chatId = event.chat.id;
             const date = event.date || Math.floor(Date.now() / 1000);
             console.log("🔥 Chat Join Request detected from User ID:", userId);
+
+            // Check if we have an fbclid stored for this user
+            const storedFbclid = userClickMapping[userId] || userClickMapping[chatId];
+
+            const userData = {
+                external_id: crypto.createHash('sha256').update(String(userId)).digest('hex')
+            };
+
+            // Agar fbclid mil gaya toh CAPI mein 'fbc' pass kar do (Meta campaign attribution ke liye)
+            if (storedFbclid) {
+                userData.fbc = `fb.1.${Date.now()}.${storedFbclid}`;
+                console.log("🎯 Attached fbc to CAPI payload:", userData.fbc);
+            }
 
             const capiPayload = {
                 data: [{
@@ -53,9 +81,7 @@ app.post('/api/webhook', async (req, res) => {
                     event_time: date,
                     action_source: "system_generated",
                     event_id: `sub_${userId}_${date}`,
-                    user_data: {
-                        external_id: crypto.createHash('sha256').update(String(userId)).digest('hex')
-                    }
+                    user_data: userData
                 }]
             };
 
@@ -80,7 +106,6 @@ const PORT = process.env.PORT || 3000;
 app.listen(PORT, async () => {
     console.log(`Server running on port ${PORT}`);
     
-    // Auto set webhook on Railway deployment
     if (process.env.RAILWAY_STATIC_URL) {
         try {
             const webhookUrl = `https://${process.env.RAILWAY_STATIC_URL}/api/webhook`;
