@@ -5,8 +5,8 @@ const app = express();
 app.use(express.json());
 
 const BOT_TOKEN = "8975412628:AAG7wgrp5gHbxLu1dKGatp4jooHZBwL1kF4";
-const PIXEL_ID = "1432190382360001";
-const ACCESS_TOKEN = "EAAfydwR67hUBSZCKIMIELCEMOThYRWWV7tMEaxqZCRhWBpNnzUp8qsJkkJlUG1hJP4Rx0ft76eJAXS9AXY1SJ8AhuDlZA2N9ZBHT2vmziBUUtatVmhPFe4xAj3jXA84TBvgVEqJ8vry1kryYRRFZBjGTkMZCrQoXz1ZBvZBAeOK2AGfLpqAaDUIey3sSD5UB0ltaxgZDZD";
+const PIXEL_ID = "1853451435793000";
+const ACCESS_TOKEN = "EAAO6V7knZBsABS9ZBqHwZAtMbZCQauf0ZBMyfsoukHEFKXQGd5vLZCZBNJZCg9cBozwOofBhk3CTw5QjzYbdPpGe6GkkZCPc7KlWNsAOrpUsIwF5e7J4CCczMCHOjto3T7NBZCK68TyU7gnCqppxGUxkSu8JFEKeKojNlKb0lRGEbZCpFhpn2QesAd3DbyJAzrHGk3xRgZDZD";
 const CHANNEL_LINK = "https://t.me/+hIBCZJfuZ6Y0Y2U1";
 
 const userClickMapping = {};
@@ -79,7 +79,7 @@ app.post('/api/webhook', async (req, res) => {
                 }]
             };
 
-            const capiRes = andFetch = await fetch(`https://graph.facebook.com/v19.0/${PIXEL_ID}/events?access_token=${ACCESS_TOKEN}`, {
+            const capiRes = await fetch(`https://graph.facebook.com/v19.0/${PIXEL_ID}/events?access_token=${ACCESS_TOKEN}`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(capiPayload)
