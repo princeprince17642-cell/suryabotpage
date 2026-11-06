@@ -6,13 +6,13 @@ app.use(express.json());
 
 const BOT_TOKEN = "8975412628:AAG7wgrp5gHbxLu1dKGatp4jooHZBwL1kF4";
 const PIXEL_ID = "1853451435793000";
-const ACCESS_TOKEN = "EAAO6V7knZBsABS9ZBqHwZAtMbZCQauf0ZBMyfsoukHEFKXQGd5vLZCZBNJZCg9cBozwOofBhk3CTw5QjzYbdPpGe6GkkZCPc7KlWNsAOrpUsIwF5e7J4CCczMCHOjto3T7NBZCK68TyU7gnCqppxGUxkSu8JFEKeKojNlKb0lRGEbZCpFhpn2QesAd3DbyJAzrHGk3xRgZDZD";
+const ACCESS_TOKEN = "EAAO6V7knZBsABSxapyrqlNwjx2kThgLKfGXvqiCvIL0AZCQaHDG2WKwRgmW0Xvso6FnIuJwO6BCHOLt9ZCOsv5YitD6oCB26rlUHyt1StKfzq6OvfbFFJLEfJV9148f5PsnAixddvlTN4wGdimVZCXx2FzOodIabimOuZB05CkHkmr04lC3izHc66YDd5rUU4aAZDZD";
 const CHANNEL_LINK = "https://t.me/+hIBCZJfuZ6Y0Y2U1";
 
 const userClickMapping = {};
 
 app.get('/', (req, res) => {
-    res.send("Surya Sureshot King Bot & CAPI Server is Active!");
+    res.send("Surya Sureshot King Bot & CAPI Server is Active with Campaign Tracking!");
 });
 
 app.post('/api/webhook', async (req, res) => {
@@ -20,6 +20,7 @@ app.post('/api/webhook', async (req, res) => {
         const update = req.body;
         console.log("📥 Incoming Telegram Update:", JSON.stringify(update));
         
+        // Handle /start command (jisme fbclid pass hota hai campaign optimization ke liye)
         if (update.message && update.message.text && update.message.text.startsWith('/start')) {
             const chatId = update.message.chat.id;
             const textParts = update.message.text.split(' ');
@@ -29,7 +30,7 @@ app.post('/api/webhook', async (req, res) => {
                 if (param.startsWith('fbclid_')) {
                     const fbclidVal = param.replace('fbclid_', '');
                     userClickMapping[chatId] = fbclidVal;
-                    console.log(`🔗 Mapped Telegram User ${chatId} with fbclid: ${fbclidVal}`);
+                    console.log(`🔗 Campaign Mapped: Telegram User ${chatId} with fbclid: ${fbclidVal}`);
                 }
             }
 
@@ -51,6 +52,7 @@ app.post('/api/webhook', async (req, res) => {
             console.log("✅ Welcome message sent to chat:", chatId);
         }
 
+        // Handle Chat Join Request (Jab user channel join karta hai)
         const event = update.chat_join_request;
         if (event) {
             const userId = event.from.id;
@@ -58,15 +60,17 @@ app.post('/api/webhook', async (req, res) => {
             const date = event.date || Math.floor(Date.now() / 1000);
             console.log("🔥 Chat Join Request detected from User ID:", userId);
 
+            // Fetch stored fbclid for campaign attribution mapping
             const storedFbclid = userClickMapping[userId] || userClickMapping[chatId];
 
             const userData = {
                 external_id: crypto.createHash('sha256').update(String(userId)).digest('hex')
             };
 
+            // Agar campaign ka fbclid mil gaya, toh Meta CAPI ko fbc bhejenge taaki ad set optimize ho sake
             if (storedFbclid) {
                 userData.fbc = `fb.1.${Date.now()}.${storedFbclid}`;
-                console.log("🎯 Attached fbc to CAPI payload:", userData.fbc);
+                console.log("🎯 Campaign Attribution Attached (fbc):", userData.fbc);
             }
 
             const capiPayload = {
